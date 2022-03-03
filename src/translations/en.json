@@ -1,0 +1,27 @@
+{
+    "mainNavigation": {
+        "home": "Home",
+        "commissions": "Commissions",
+        "portfolio": "Portfolio",
+        "about": "About"
+    },
+    "about": {
+        "activity": {
+            "type": {
+                "PLAYING": "Playing",
+                "STREAMING": "Streaming",
+                "LISTENING": "Listening",
+                "WATCHING": "Watching",
+                "CUSTOM": "Custom",
+                "COMPETING": "Competing"
+            },
+            "YouTube": {
+                "Playing": "Playing",
+                "Paused": "Paused"
+            },
+            "Spotify": {
+                "coverOf": "Cover of album"
+            }
+        }
+    }
+}

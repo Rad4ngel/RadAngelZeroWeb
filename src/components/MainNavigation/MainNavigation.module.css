@@ -1,0 +1,6 @@
+nav {
+    display: flex;
+    align-self: center;
+    width: 100%;
+    justify-content: center;
+}

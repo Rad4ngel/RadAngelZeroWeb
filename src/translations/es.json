@@ -1,0 +1,27 @@
+{
+    "mainNavigation": {
+        "home": "Inicio",
+        "commissions": "Comisiones",
+        "portfolio": "Portafolio",
+        "about": "Acerca de"
+    },
+    "about": {
+        "activity": {
+            "type": {
+                "PLAYING": "Jugando",
+                "STREAMING": "Transmitiendo",
+                "LISTENING": "Escuchando",
+                "WATCHING": "Viendo",
+                "CUSTOM": "Personalizado",
+                "COMPETING": "Compitiendo"
+            },
+            "Youtube": {
+                "Playing": "Reproduciendo",
+                "Paused": "Pausado"
+            },
+            "Spotify": {
+                "coverOf": "Portada del album"
+            }
+        }
+    }
+}
