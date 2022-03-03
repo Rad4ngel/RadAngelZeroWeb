@@ -1,28 +1,32 @@
+import React, { Component } from 'react';
 import logo from './logo.svg';
+import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import './App.css';
+import Navigator from './components/MainNavigation/MainNavigation';
+import Home from './screens/Home/Home';
+import Commissions from './screens/Commissions/Commissions';
+import About from './screens/About/About';
+import RadLogo from './components/RadLogo/RadLogo';
+import Portfolio from './screens/Portfolio/Portfolio';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <p>
-          New node version: 17.0.1
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+
+  render() {
+    return (
+      <BrowserRouter>
+        <header>
+          <Link to="/"><RadLogo /></Link>
+          <Navigator />
+        </header>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='commissions' element={<Commissions />} />
+          <Route path='portfolio' element={<Portfolio />} />
+          <Route path='about' element={<About />} />
+        </Routes>
+      </BrowserRouter>
+    )
+  };
 }
 
 export default App;
