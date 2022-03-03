@@ -34,6 +34,7 @@ jobs:
         REACT_APP_FIREBASE_PROJECT_ID: ${{ secrets.REACT_APP_FIREBASE_PROJECT_ID }}
         REACT_APP_FIREBASE_SENDER_ID: ${{ secrets.REACT_APP_FIREBASE_SENDER_ID }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - run: npm ci
     - run: npm run build --if-present
     - run: |
         git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
