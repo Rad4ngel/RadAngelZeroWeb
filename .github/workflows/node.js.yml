@@ -33,8 +33,6 @@ jobs:
         REACT_APP_FIREBASE_MEASUREMENT_ID: ${{secrets.REACT_APP_FIREBASE_MEASUREMENT_ID}}
         REACT_APP_FIREBASE_PROJECT_ID: ${{secrets.REACT_APP_FIREBASE_PROJECT_ID}}
         REACT_APP_FIREBASE_SENDER_ID: ${{secrets.REACT_APP_FIREBASE_SENDER_ID}}
-        
-        
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
