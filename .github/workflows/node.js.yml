@@ -4,11 +4,12 @@
 name: Deploy with gh-pages
 
 on:
+  workflow_dispatch
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-  workflow_dispatch
+
 
 jobs:
   build:
