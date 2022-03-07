@@ -4,5 +4,4 @@ export function getFaviconEl() {
 
 export function getTitle() {
     return document.getElementById("title");
-
 }

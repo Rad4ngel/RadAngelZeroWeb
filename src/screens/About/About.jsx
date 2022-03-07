@@ -14,11 +14,14 @@ export default function About() {
 
     return (
         <main>
-            <h2>About</h2>
+            <h2 style={{ width: '80%', alignSelf: 'center' }}>
+                {t(`about.introduction`)}
+                {/* {radStatus.username}  */}
+            </h2>
             {Object.keys(radStatus).length > 0 && radStatus.activities && Object.values(radStatus.activities).map((activity, i) => {
                 return (<Activity key={`${activity}-${i}`} activity={activity} />)
             })}
-            <p>{JSON.stringify(radStatus)}</p>
+            {/* <p>{JSON.stringify(radStatus)}</p> */}
         </main>
     );
 }
