@@ -21,6 +21,15 @@
             },
             "Spotify": {
                 "coverOf": "Cover of album"
+            },
+            "VisualStudioCode": {
+                "titleAccompaniment": {
+                    "writingCode": "Writing code on",
+                    "doingMagic": "Doing Magic on"
+                },
+                "editing": "Editing",
+                "workspace": "Workspace (repository):",
+                "edtitingFile": "Editing a {{fileType}} file"
             }
         }
     }

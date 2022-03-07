@@ -21,6 +21,15 @@
             },
             "Spotify": {
                 "coverOf": "Portada del album"
+            },
+            "VisualStudioCode": {
+                "titleAccompaniment": {
+                    "writingCode": "Escribiendo codigo en",
+                    "doingMagic": "Haciendo magia en"
+                },
+                "editing": "Editando",
+                "workspace": "Espacio de trabajo (repositorio):",
+                "edtitingFile": "Editando un archivo {{fileType}}"
             }
         }
     }
