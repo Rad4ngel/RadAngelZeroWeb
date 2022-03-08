@@ -7,6 +7,13 @@
     },
     "about": {
         "introduction": "Hola, soy RadAngelZero, bueno, mi nombre real es Angel, y soy un diseñador multimedial al que le encanta crear cosas digitales, como esta pagina",
+        "status": {
+            "iam": "Estoy",
+            "online": "conectado",
+            "idle": "ausente",
+            "dnd": "ocupado",
+            "none": "durmiendo"
+        },
         "activity": {
             "type": {
                 "PLAYING": "Jugando",
@@ -15,6 +22,9 @@
                 "WATCHING": "Viendo",
                 "CUSTOM": "Personalizado",
                 "COMPETING": "Compitiendo"
+            },
+            "Game": {
+                "coverOf": "Portada de"
             },
             "Youtube": {
                 "Playing": "Reproduciendo",

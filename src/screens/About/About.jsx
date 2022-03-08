@@ -18,6 +18,9 @@ export default function About() {
                 {t(`about.introduction`)}
                 {/* {radStatus.username}  */}
             </h2>
+            <h2 style={{ width: '80%', alignSelf: 'center' }}>
+                {t(`about.status.iam`)} {radStatus.status ? t(`about.status.${radStatus.status}`) : t(`about.status.none`)}
+            </h2>
             {Object.keys(radStatus).length > 0 && radStatus.activities && Object.values(radStatus.activities).map((activity, i) => {
                 return (<Activity key={`${activity}-${i}`} activity={activity} />)
             })}
