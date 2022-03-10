@@ -43,5 +43,6 @@
                 "edtitingFile": "Editando un archivo {{fileType}}"
             }
         }
-    }
+    },
+    "on": "en"
 }

@@ -1,60 +1,103 @@
-import React, { useState } from "react"
-import { t } from 'i18next'
-import { height } from "@mui/system";
-const blacklist = ['Spotify', 'Visual Studio Code', 'Twitch', 'Google Play'];
-const watchlist = ['Twitch', 'YouTube']
+import React, { useEffect, useState } from "react";
+import { t } from 'i18next';
+import { useElapsedTime } from 'use-elapsed-time';
+import styles from './Activity.module.css'
+const blacklist = ['Visual Studio Code', 'Twitch', 'YouTube', 'Google Play', 'GitHub'];
+const premidBlacklist = [];
+const watchlist = ['Twitch', 'YouTube'];
+const watchStatuses = ['Playing', 'Paused', 'Live']
+const workSoftware = ['Blender', 'Visual Studio Code'];
+const modelingSoftware = ['Blender', ''];
 
 export default function Activity({ activity }) {
-    const [rand, setRand] = useState(Math.round(Math.random() * 1));
-    const [gameImage, setGameImage] = useState('')
-    console.log(activity)
+    const [rand] = useState(Math.round(Math.random() * 1));
+    const [gameImage, setGameImage] = useState('');
+    const [isPlayingElapsedTime, setIsPlayingElapsedTime] = useState(true);
 
-    const VSCTitleAccompaniment = () => {
-        switch (rand) {
-            case 0:
-                return t(`about.activity.VisualStudioCode.titleAccompaniment.writingCode`)
-            case 1:
-                return t(`about.activity.VisualStudioCode.titleAccompaniment.doingMagic`)
-            default:
-                break;
+    const { elapsedTime, reset } = useElapsedTime({
+        isPlaying: isPlayingElapsedTime,
+        updateInterval: 1,
+    });
+    console.log(activity);
+
+    useEffect(() => {
+        // setIsPlayingElapsedTime(false);
+        console.log('use effect');
+        console.log(activity);
+        if (activity.timestamps) {
+            if (Object.keys(activity.timestamps).length > 0) {
+                let now = new Date()
+                if (activity.timestamps.start) {
+                    let start = new Date(activity.timestamps.start * 1000)
+                    let startSec = (Math.floor((now - start) / 1000)).toFixed(0)
+                    reset(Number(startSec));
+                    setIsPlayingElapsedTime(true)
+                    console.log(startSec)
+                }
+                // let started = new Date(time)
+            }
+        } else {
+            setIsPlayingElapsedTime(false)
         }
-    }
-
-    if (!activity.assets && !blacklist.includes(activity.name)) {
-        const searchWikis = new XMLHttpRequest();
-        searchWikis.open("GET", `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${activity.name}&format=json&origin=*`);
-        searchWikis.send();
-        searchWikis.onreadystatechange = (wikisResult) => {
-            if (wikisResult.target.readyState === 4 && wikisResult.target.status === 200) {
-                console.log(JSON.parse(searchWikis.response))
-                let title = JSON.parse(searchWikis.response).query.search[0].title
-                const getWiki = new XMLHttpRequest();
-                getWiki.open("GET", `https://en.wikipedia.org/w/rest.php/v1/page/${title}`);
-                getWiki.send();
-                getWiki.onreadystatechange = (wiki) => {
-                    if (wiki.target.readyState === 4 && wiki.target.status === 200) {
-                        let wikiContent = JSON.parse(getWiki.response).source.split('\n');
-                        wikiContent.every((element) => {
-                            if (element.includes('image')) {
-                                const getWikiImage = new XMLHttpRequest();
-                                getWikiImage.open("GET", `https://en.wikipedia.org/w/api.php?action=query&titles=Image:${element.split(' = ')[1].replace('File:', '')}&prop=imageinfo&iiprop=url&format=json&origin=*`);
-                                getWikiImage.send();
-                                getWikiImage.onreadystatechange = (wikiImage) => {
-                                    if (wikiImage.target.readyState === 4 && wikiImage.target.status === 200) {
-                                        let wikiPage = JSON.parse(getWikiImage.response).query.pages;
-                                        setGameImage(wikiPage[Object.keys(wikiPage)[0]].imageinfo[0].url)
+        // switch (rand) {
+        //     case 0:
+        //         return t(`about.activity.VisualStudioCode.titleAccompaniment.writingCode`)
+        //     case 1:
+        //         return t(`about.activity.VisualStudioCode.titleAccompaniment.doingMagic`)
+        //     default:
+        //         break;
+        // }
+        if (!activity.assets && !blacklist.includes(activity.name)) {
+            console.log('search on wiki ' + activity.name)
+            const searchWikis = new XMLHttpRequest();
+            searchWikis.open("GET", `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${activity.name}&format=json&origin=*`);
+            searchWikis.send();
+            searchWikis.onreadystatechange = (wikisResult) => {
+                if (wikisResult.target.readyState === 4 && wikisResult.target.status === 200) {
+                    console.log(JSON.parse(searchWikis.response))
+                    let title = JSON.parse(searchWikis.response).query.search[activity.name === 'Blender' ? 1 : 0].title
+                    const getWiki = new XMLHttpRequest();
+                    getWiki.open("GET", `https://en.wikipedia.org/w/rest.php/v1/page/${title}`);
+                    getWiki.send();
+                    getWiki.onreadystatechange = (wiki) => {
+                        if (wiki.target.readyState === 4 && wiki.target.status === 200) {
+                            let wikiContent = JSON.parse(getWiki.response).source.split('\n');
+                            wikiContent.every((element) => {
+                                if (element.includes('logo') || element.includes('File:') || element.includes('image')) {
+                                    let imgProcessor = element
+                                    if (imgProcessor.includes(' = ')) {
+                                        imgProcessor = imgProcessor.split(' = ')[1]
                                     }
+                                    if (imgProcessor.includes('|')) {
+                                        imgProcessor = imgProcessor.split('|')[0]
+                                    }
+                                    const getWikiImage = new XMLHttpRequest();
+                                    getWikiImage.open("GET", `https://en.wikipedia.org/w/api.php?action=query&titles=Image:${imgProcessor.replace(/\[/g, '').replace('File:', '')}&prop=imageinfo&iiprop=url&format=json&origin=*`);
+                                    getWikiImage.send();
+                                    getWikiImage.onreadystatechange = (wikiImage) => {
+                                        if (wikiImage.target.readyState === 4 && wikiImage.target.status === 200) {
+                                            let wikiPage = JSON.parse(getWikiImage.response).query.pages;
+                                            setGameImage(wikiPage[Object.keys(wikiPage)[0]].imageinfo[0].url)
+                                        }
+                                    }
+                                    return false;
                                 }
-                                return false;
-                            }
-                            return true;
-                        });
+                                return true;
+                            });
+                        }
                     }
                 }
             }
         }
+    }, [activity, rand, reset])
+
+
+
+    const VSCTitleAccompaniment = () => {
 
     }
+
+
 
 
     return (
@@ -69,49 +112,60 @@ export default function Activity({ activity }) {
             border: '8px solid #9e00ff',
             margin: '20px 0px'
         }}>
-            {((activity.assets ? !activity.assets.largeText.toLowerCase().includes('premid') : true) && !blacklist.includes(activity.name)) &&
+            {((activity.assets ? (activity.assets.largeText ? !activity.assets.largeText.toLowerCase().includes('premid') : true) : true) && !blacklist.includes(activity.name)) &&
                 <div>
                     <h2>
-                        {t(`about.activity.type.${activity.type}`)} {activity.name}
+                        {t(`about.activity.type.${activity.type}`)} {activity.name === 'Spotify' ? t(`on`) : ''} {activity.name}
                     </h2>
                     <div style={{
                         display: 'flex',
                         flexDirection: 'row'
                     }}>
-                        <img src={gameImage} alt={`${t('about.activity.Game.coverOf')} ${activity.name}`}
+                        <img src={
+                            activity.assets ?
+                                activity.name === 'League of Legends' ?
+                                    activity.state === 'En Selección de campeones' || activity.state === 'En Sala' || activity.state === 'En cola' ?
+                                        activity.assets.largeImageURL
+                                        :
+                                        `http://ddragon.leagueoflegends.com/cdn/img/champion/loading/${activity.assets.largeText.replace(' ', '')}_0.jpg`
+                                    :
+                                    activity.assets.largeImageURL || gameImage
+                                :
+                                gameImage
+                        }
+                            alt={activity.name === 'Spotify' ?
+                                `${t('about.activity.Spotify.coverOf')} ${activity.assets.largeText}`
+                                :
+                                `${t('about.activity.Game.coverOf')} ${activity.name}`
+                            }
                             style={{
                                 width: '20%',
-                                objectFit: 'contain'
-                            }} />
-                    </div>
-                </div>
-            }
-            {activity.name === 'Spotify' &&
-                <div>
-                    <h2>
-                        {activity.name}
-                    </h2>
-                    <div style={{
-                        display: 'flex',
-                        flexDirection: 'row'
-                    }}>
-                        <img src={activity.assets.largeImageURL} alt={`${t('about.activity.Spotify.coverOf')} ${activity.assets.largeText}`}
-                            style={{
-                                width: '20%',
-                                objectFit: 'contain'
+                                objectFit: 'contain',
+                                borderRadius: activity.name === 'Spotify' || activity.state === 'En partida' ? '0%' : '10%'
                             }} />
                         <div style={{ width: '2%' }} />
                         <div>
                             <h3 style={{
                                 marginBlock: '0px'
                             }}>
-                                {activity.details}
+                                {activity.details || ''}
                             </h3>
-                            <h4>{activity.state.replace(/;/g, ',')}</h4>
-                            <h5>{activity.assets.largeText}</h5>
+                            <h4>{activity.state || ''}</h4>
+                            <h5>{activity.assets ? activity.assets.largeText || '' : ''}</h5>
+                            <div>
+
+                                {activity.timestamps &&
+                                    <h6>
+                                        {Math.floor(elapsedTime.toFixed(0) / 86400) !== 0 && Math.floor(elapsedTime.toFixed(0) / 86400) + ':'}
+                                        {Math.floor(elapsedTime.toFixed(0) / 3600) !== 0 && Math.floor(elapsedTime.toFixed(0) / 3600).toString().length < 2 && '0'}{Math.floor(elapsedTime.toFixed(0) / 3600) !== 0 && Math.floor(elapsedTime.toFixed(0) / 3600) + ':'}
+                                        {Math.floor(elapsedTime.toFixed(0) / 60).toString().length < 2 && '0'}{Math.floor(elapsedTime.toFixed(0) / 60) + ':'}
+                                        {Number(elapsedTime.toFixed(0) % 60).toString().length < 2 && '0'}{elapsedTime.toFixed(0) % 60}
+                                    </h6>
+                                }
+                            </div>
                         </div>
                     </div>
-                </div >
+                </div>
             }
             {activity.name === 'Visual Studio Code' &&
                 <div>
@@ -133,15 +187,15 @@ export default function Activity({ activity }) {
                             <h3 style={{
                                 marginBlock: '0px'
                             }}>
-                                {t(`about.activity.VisualStudioCode.editing`)} {activity.details.split(' ').pop()}
+                                {activity.details === 'Idling' ? 'Pensando' : t(`about.activity.VisualStudioCode.editing`) + activity.details.split(' ').pop()}
                             </h3>
-                            <h4>{t(`about.activity.VisualStudioCode.workspace`)} {activity.state.split(' ').pop()}</h4>
-                            <h5>{t(`about.activity.VisualStudioCode.edtitingFile`, { fileType: activity.assets.largeText.split(' ')[2] })}</h5>
+                            <h4>{activity.state ? t(`about.activity.VisualStudioCode.workspace`) + ' ' + activity.state.split(' ').pop() : ''}</h4>
+                            <h5>{activity.assets.largeText === 'Idling' ? '' : t(`about.activity.VisualStudioCode.edtitingFile`, { fileType: activity.assets.largeText.split(' ')[2] })}</h5>
                         </div>
                     </div>
                 </div>
             }
-            {(activity.assets ? activity.assets.largeText.toLowerCase().includes('premid') : false) &&
+            {(activity.assets ? (activity.assets.largeText ? activity.assets.largeText.toLowerCase().includes('premid') : false) : false) && !premidBlacklist.includes(activity.name) &&
                 <div>
                     <h2>
                         {watchlist.includes(activity.name) && t(`about.activity.type.WATCHING`)} {activity.name}
@@ -177,7 +231,7 @@ export default function Activity({ activity }) {
                                     marginLeft: 'auto'
 
                                 }}>
-                                    {activity.assets.smallText === 'Live' &&
+                                    {watchlist.includes(activity.name) &&
                                         // <div style={{
                                         //     backgroundColor: '#f00',
                                         //     width: '60%',
