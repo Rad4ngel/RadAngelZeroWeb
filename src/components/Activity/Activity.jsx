@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { t } from 'i18next';
 import { useElapsedTime } from 'use-elapsed-time';
 import styles from './Activity.module.css'
-const blacklist = ['Visual Studio Code', 'Twitch', 'YouTube', 'Google Play', 'GitHub'];
+const blacklist = ['Twitch', 'YouTube', 'Google Play', 'GitHub'];
 const premidBlacklist = [];
 const watchlist = ['Twitch', 'YouTube'];
 const watchStatuses = ['Playing', 'Paused', 'Live']
 const workSoftware = ['Blender', 'Visual Studio Code'];
-const modelingSoftware = ['Blender', ''];
+const modelingSoftware = ['Blender'];
 
 export default function Activity({ activity }) {
     const [rand] = useState(Math.round(Math.random() * 1));
@@ -109,30 +109,32 @@ export default function Activity({ activity }) {
             backgroundColor: '#2c2c2c',
             padding: '2vw',
             borderRadius: '2vh',
-            border: '8px solid #9e00ff',
-            margin: '20px 0px'
+            // border: '8px solid #9e00ff',
+            margin: '20px 0px',
+            overflow: 'hidden'
         }}>
             {((activity.assets ? (activity.assets.largeText ? !activity.assets.largeText.toLowerCase().includes('premid') : true) : true) && !blacklist.includes(activity.name)) &&
                 <div>
                     <h2>
-                        {t(`about.activity.type.${activity.type}`)} {activity.name === 'Spotify' ? t(`on`) : ''} {activity.name}
+                        {!workSoftware.includes(activity.name) ? t(`about.activity.type.${activity.type}`) : t(`about.activity.Work.working`)} {activity.name === 'Spotify' || workSoftware.includes(activity.name) ? t(`on`) : ''} {activity.name}
                     </h2>
                     <div style={{
                         display: 'flex',
                         flexDirection: 'row'
                     }}>
-                        <img src={
-                            activity.assets ?
-                                activity.name === 'League of Legends' ?
-                                    activity.state === 'En Selección de campeones' || activity.state === 'En Sala' || activity.state === 'En cola' ?
-                                        activity.assets.largeImageURL
+                        <img
+                            src={
+                                activity.assets ?
+                                    activity.name === 'League of Legends' ?
+                                        activity.state === 'En Selección de campeones' || activity.state === 'En Sala' || activity.state === 'En cola' ?
+                                            activity.assets.largeImageURL
+                                            :
+                                            `http://ddragon.leagueoflegends.com/cdn/img/champion/loading/${activity.assets.largeText === 'Kai\'Sa' ? 'Kaisa' : activity.assets.largeText.replace(' ', '').replace('\'', '')}_0.jpg`
                                         :
-                                        `http://ddragon.leagueoflegends.com/cdn/img/champion/loading/${activity.assets.largeText.replace(' ', '')}_0.jpg`
+                                        activity.assets.largeImageURL || gameImage
                                     :
-                                    activity.assets.largeImageURL || gameImage
-                                :
-                                gameImage
-                        }
+                                    gameImage
+                            }
                             alt={activity.name === 'Spotify' ?
                                 `${t('about.activity.Spotify.coverOf')} ${activity.assets.largeText}`
                                 :
@@ -141,24 +143,67 @@ export default function Activity({ activity }) {
                             style={{
                                 width: '20%',
                                 objectFit: 'contain',
-                                borderRadius: activity.name === 'Spotify' || activity.state === 'En partida' ? '0%' : '10%'
+                                borderRadius: activity.name === 'Spotify' || activity.state === 'En partida' || !activity.assets ? '0%' : '10%',
+                                minWidth: '128px',
+                                alignSelf: 'flex-start'
                             }} />
                         <div style={{ width: '2%' }} />
                         <div>
                             <h3 style={{
                                 marginBlock: '0px'
                             }}>
-                                {activity.details || ''}
+                                {/* {activity.name === 'Spotify' &&
+                                    < a href="null">
+                                        {activity.details ? activity.details.replace('Editing', t(`about.activity.VisualStudioCode.editing`)) : ''}
+                                    </a>
+                                } */}
+                                {/* {activity.name !== 'Spotify' &&
+                                     activity.details ? activity.details.replace('Editing', t(`about.activity.VisualStudioCode.editing`)) : ''
+                                } */}
+                                {activity.details ? activity.details.replace('Editing', t(`about.activity.VisualStudioCode.editing`)) : ''}
                             </h3>
-                            <h4>{activity.state || ''}</h4>
-                            <h5>{activity.assets ? activity.assets.largeText || '' : ''}</h5>
+                            <h4>
+                                {
+                                    activity.state ?
+                                        activity.name === 'Spotify' ?
+                                            activity.state.replace(/;/g, ',')
+                                            :
+                                            activity.name === 'Visual Studio Code' ?
+                                                activity.details === 'Idling' ?
+                                                    'Pensando'
+                                                    :
+                                                    activity.state.replace('Workspace:', t(`about.activity.VisualStudioCode.workspace`))
+                                                :
+                                                activity.state
+                                        :
+                                        ''
+                                }
+                            </h4>
+                            <h5>
+                                {
+                                    activity.assets ?
+                                        activity.name === 'Visual Studio Code' ?
+                                            activity.assets.largeText === 'Idling' ? '' : t(`about.activity.VisualStudioCode.edtitingFile`, { fileType: activity.assets.largeText.split(' ')[2] })
+                                            :
+                                            activity.assets.largeText || ''
+                                        :
+                                        ''
+                                }
+                            </h5>
                             <div>
 
                                 {activity.timestamps &&
                                     <h6>
-                                        {Math.floor(elapsedTime.toFixed(0) / 86400) !== 0 && Math.floor(elapsedTime.toFixed(0) / 86400) + ':'}
-                                        {Math.floor(elapsedTime.toFixed(0) / 3600) !== 0 && Math.floor(elapsedTime.toFixed(0) / 3600).toString().length < 2 && '0'}{Math.floor(elapsedTime.toFixed(0) / 3600) !== 0 && Math.floor(elapsedTime.toFixed(0) / 3600) + ':'}
-                                        {Math.floor(elapsedTime.toFixed(0) / 60).toString().length < 2 && '0'}{Math.floor(elapsedTime.toFixed(0) / 60) + ':'}
+                                        {Math.floor(elapsedTime.toFixed(0) / 86400) !== 0 &&
+                                            Math.floor(elapsedTime.toFixed(0) / 86400) + ':'}
+                                        {Math.floor(elapsedTime.toFixed(0) / 3600) !== 0 &&
+                                            ((Math.floor(elapsedTime.toFixed(0) / 3600) - (Math.floor(elapsedTime.toFixed(0) / 86400) * 24)).toString().length < 2 && '0')
+                                            +
+                                            (Math.floor(elapsedTime.toFixed(0) / 3600) - (Math.floor(elapsedTime.toFixed(0) / 86400) * 24)) + ':'}
+
+                                        {(Math.floor(elapsedTime.toFixed(0) / 60) - (Math.floor(elapsedTime.toFixed(0) / 3600) * 60)).toString().length < 2 && '0'}
+                                        {(Math.floor(elapsedTime.toFixed(0) / 60) - (Math.floor(elapsedTime.toFixed(0) / 3600) * 60)) + ':'}
+
                                         {Number(elapsedTime.toFixed(0) % 60).toString().length < 2 && '0'}{elapsedTime.toFixed(0) % 60}
                                     </h6>
                                 }
@@ -167,35 +212,8 @@ export default function Activity({ activity }) {
                     </div>
                 </div>
             }
-            {activity.name === 'Visual Studio Code' &&
-                <div>
-                    <h2>
-                        {VSCTitleAccompaniment()} {activity.name}
-                    </h2>
-                    <div style={{
-                        display: 'flex',
-                        flexDirection: 'row'
-                    }}>
-                        <img src={activity.assets.largeImageURL} alt={`${t('about.activity.Spotify.coverOf')} ${activity.assets.largeText}`}
-                            style={{
-                                width: '20%',
-                                objectFit: 'contain',
-                                borderRadius: '10%'
-                            }} />
-                        <div style={{ width: '2%' }} />
-                        <div>
-                            <h3 style={{
-                                marginBlock: '0px'
-                            }}>
-                                {activity.details === 'Idling' ? 'Pensando' : t(`about.activity.VisualStudioCode.editing`) + activity.details.split(' ').pop()}
-                            </h3>
-                            <h4>{activity.state ? t(`about.activity.VisualStudioCode.workspace`) + ' ' + activity.state.split(' ').pop() : ''}</h4>
-                            <h5>{activity.assets.largeText === 'Idling' ? '' : t(`about.activity.VisualStudioCode.edtitingFile`, { fileType: activity.assets.largeText.split(' ')[2] })}</h5>
-                        </div>
-                    </div>
-                </div>
-            }
-            {(activity.assets ? (activity.assets.largeText ? activity.assets.largeText.toLowerCase().includes('premid') : false) : false) && !premidBlacklist.includes(activity.name) &&
+            {
+                (activity.assets ? (activity.assets.largeText ? activity.assets.largeText.toLowerCase().includes('premid') : false) : false) && !premidBlacklist.includes(activity.name) &&
                 <div>
                     <h2>
                         {watchlist.includes(activity.name) && t(`about.activity.type.WATCHING`)} {activity.name}
@@ -263,6 +281,6 @@ export default function Activity({ activity }) {
                     </div>
                 </div >
             }
-        </div>
+        </div >
     )
 }

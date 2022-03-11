@@ -23,6 +23,9 @@
                 "CUSTOM": "Custom",
                 "COMPETING": "Competing"
             },
+            "Work": {
+                "working": "Working"
+            },
             "Game": {
                 "coverOf": "Cover of"
             },
@@ -44,5 +47,5 @@
             }
         }
     },
-    "on": "en"
+    "on": "on"
 }

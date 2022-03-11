@@ -23,6 +23,9 @@
                 "CUSTOM": "Personalizado",
                 "COMPETING": "Compitiendo"
             },
+            "Work": {
+                "working": "Trabajando"
+            },
             "Game": {
                 "coverOf": "Portada de"
             },
@@ -35,8 +38,8 @@
             },
             "VisualStudioCode": {
                 "titleAccompaniment": {
-                    "writingCode": "Escribiendo codigo en",
-                    "doingMagic": "Haciendo magia en"
+                    "writingCode": "Escribiendo codigo",
+                    "doingMagic": "Haciendo magia"
                 },
                 "editing": "Editando",
                 "workspace": "Espacio de trabajo (repositorio):",
