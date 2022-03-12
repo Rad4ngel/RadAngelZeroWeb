@@ -29,12 +29,41 @@
             "Game": {
                 "coverOf": "Portada de"
             },
-            "Youtube": {
+            "Watch": {
                 "Playing": "Reproduciendo",
-                "Paused": "Pausado"
+                "Paused": "Pausado",
+                "Live": "En Vivo"
             },
             "Spotify": {
                 "coverOf": "Portada del album"
+            },
+            "Blender": {
+                "titleAccompaniment": {
+                    "modeling": "Modelando",
+                    "makingWaifus": "Haciendo monas chinas"
+                },
+                "project": "Proyecto",
+                "fileSize": "Tamaño de archivo",
+                "engine": "Motor {{engine}}",
+                "version": "la versión {{version}}",
+                "modes": {
+                    "Mode": "Modo",
+                    "Paint": "Pintado",
+                    "Object": "Objeto",
+                    "Edit": "Edición",
+                    "Sculpt": "Esculpido",
+                    "Vertex": "Vertices",
+                    "Weight": "Peso",
+                    "Texture": "Textura"
+                },
+                "modeOrderer": {
+                    "ObjectMode": "{{mode}} {{type}}",
+                    "EditMode": "{{mode}} {{type}}",
+                    "SculptMode": "{{mode}} {{type}}",
+                    "VertexPaintMode": "Modo de {{mode}} de {{type}}",
+                    "WeightPaintMode": "Modo de {{mode}} de {{type}}",
+                    "TexturePaintMode": "Modo de {{mode}} de {{type}}"
+                }
             },
             "VisualStudioCode": {
                 "titleAccompaniment": {
@@ -47,5 +76,6 @@
             }
         }
     },
-    "on": "en"
+    "on": "en",
+    "in": "en"
 }

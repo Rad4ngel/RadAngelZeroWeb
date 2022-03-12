@@ -29,12 +29,41 @@
             "Game": {
                 "coverOf": "Cover of"
             },
-            "YouTube": {
+            "Watch": {
                 "Playing": "Playing",
-                "Paused": "Paused"
+                "Paused": "Paused",
+                "Live": "Live"
             },
             "Spotify": {
                 "coverOf": "Cover of album"
+            },
+            "Blender": {
+                "titleAccompaniment": {
+                    "modeling": "Modeling",
+                    "makingWaifus": "Making waifus"
+                },
+                "project": "Project",
+                "fileSize": "File Size",
+                "engine": "{{engine}} Engine",
+                "version": "{{version}} version",
+                "modes": {
+                    "Mode": "Mode",
+                    "Paint": "Paint",
+                    "Object": "Object",
+                    "Edit": "Edit",
+                    "Sculpt": "Sculpt",
+                    "Vertex": "Vertex",
+                    "Weight": "Weight",
+                    "Texture": "Texture"
+                },
+                "modeOrderer": {
+                    "ObjectMode": "{{type}} {{mode}}",
+                    "EditMode": "{{type}} {{mode}}",
+                    "SculptMode": "{{type}} {{mode}}",
+                    "VertexPaintMode": "{{type}} {{mode}} Mode",
+                    "WeightPaintMode": "{{type}} {{mode}} Mode",
+                    "TexturePaintMode": "{{type}} {{mode}} Mode"
+                }
             },
             "VisualStudioCode": {
                 "titleAccompaniment": {
@@ -47,5 +76,6 @@
             }
         }
     },
-    "on": "on"
+    "on": "on",
+    "in": "in"
 }

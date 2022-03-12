@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { t } from 'i18next';
 import { useElapsedTime } from 'use-elapsed-time';
 import styles from './Activity.module.css'
-const blacklist = ['Twitch', 'YouTube', 'Google Play', 'GitHub'];
+const blacklist = ['Google Play'];
+const specialImageSearch = ['GitHub']
 const premidBlacklist = [];
 const watchlist = ['Twitch', 'YouTube'];
 const watchStatuses = ['Playing', 'Paused', 'Live']
@@ -10,8 +11,11 @@ const workSoftware = ['Blender', 'Visual Studio Code'];
 const modelingSoftware = ['Blender'];
 
 export default function Activity({ activity }) {
-    const [rand] = useState(Math.round(Math.random() * 1));
-    const [gameImage, setGameImage] = useState('');
+    const [randVSC] = useState(Math.round(Math.random() * 1));
+    const [randBlender] = useState(Math.round(Math.random() * 1));
+    const [fetchedImage, setFetchedImage] = useState('');
+    const [VSCodeTitleAccompaniment, setVSCodeTitleAccompaniment] = useState('');
+    const [BlenderTitleAccompaniment, setBlenderTitleAccompaniment] = useState('');
     const [isPlayingElapsedTime, setIsPlayingElapsedTime] = useState(true);
 
     const { elapsedTime, reset } = useElapsedTime({
@@ -39,15 +43,37 @@ export default function Activity({ activity }) {
         } else {
             setIsPlayingElapsedTime(false)
         }
-        // switch (rand) {
-        //     case 0:
-        //         return t(`about.activity.VisualStudioCode.titleAccompaniment.writingCode`)
-        //     case 1:
-        //         return t(`about.activity.VisualStudioCode.titleAccompaniment.doingMagic`)
-        //     default:
-        //         break;
-        // }
-        if (!activity.assets && !blacklist.includes(activity.name)) {
+        switch (randVSC) {
+            case 0:
+                setVSCodeTitleAccompaniment(t(`about.activity.VisualStudioCode.titleAccompaniment.writingCode`).toLowerCase())
+                break;
+            case 1:
+                setVSCodeTitleAccompaniment(t(`about.activity.VisualStudioCode.titleAccompaniment.doingMagic`).toLowerCase())
+                break;
+            default:
+                break;
+        }
+        switch (randBlender) {
+            case 0:
+                setBlenderTitleAccompaniment(t(`about.activity.Blender.titleAccompaniment.modeling`).toLowerCase())
+                break;
+            case 1:
+                setBlenderTitleAccompaniment(t(`about.activity.Blender.titleAccompaniment.makingWaifus`).toLowerCase())
+                break;
+            default:
+                break;
+        }
+        if (specialImageSearch.includes(activity.name)) {
+            if (activity.name === 'GitHub') {
+                if (activity.details.includes('profile')) {
+                    setFetchedImage(`https://github.com/${activity.details.split(' ')[1].split('\'')[0]}.png`)
+                }
+                if (activity.state) {
+                    setFetchedImage(`https://github.com/${activity.state.split('/')[0]}.png`)
+                }
+            }
+        }
+        if (!activity.assets && !specialImageSearch.includes(activity.name)) {
             console.log('search on wiki ' + activity.name)
             const searchWikis = new XMLHttpRequest();
             searchWikis.open("GET", `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${activity.name}&format=json&origin=*`);
@@ -77,7 +103,7 @@ export default function Activity({ activity }) {
                                     getWikiImage.onreadystatechange = (wikiImage) => {
                                         if (wikiImage.target.readyState === 4 && wikiImage.target.status === 200) {
                                             let wikiPage = JSON.parse(getWikiImage.response).query.pages;
-                                            setGameImage(wikiPage[Object.keys(wikiPage)[0]].imageinfo[0].url)
+                                            setFetchedImage(wikiPage[Object.keys(wikiPage)[0]].imageinfo[0].url)
                                         }
                                     }
                                     return false;
@@ -89,16 +115,7 @@ export default function Activity({ activity }) {
                 }
             }
         }
-    }, [activity, rand, reset])
-
-
-
-    const VSCTitleAccompaniment = () => {
-
-    }
-
-
-
+    }, [activity, randBlender, randVSC, reset])
 
     return (
         <div style={{
@@ -107,47 +124,90 @@ export default function Activity({ activity }) {
             alignSelf: 'center',
             width: '80%',
             backgroundColor: '#2c2c2c',
-            padding: '2vw',
+            padding: '1.2em',
             borderRadius: '2vh',
             // border: '8px solid #9e00ff',
             margin: '20px 0px',
-            overflow: 'hidden'
         }}>
-            {((activity.assets ? (activity.assets.largeText ? !activity.assets.largeText.toLowerCase().includes('premid') : true) : true) && !blacklist.includes(activity.name)) &&
-                <div>
+            {(!blacklist.includes(activity.name)) &&
+                <div style={{ overflow: 'hidden' }}>
                     <h2>
-                        {!workSoftware.includes(activity.name) ? t(`about.activity.type.${activity.type}`) : t(`about.activity.Work.working`)} {activity.name === 'Spotify' || workSoftware.includes(activity.name) ? t(`on`) : ''} {activity.name}
+                        {!workSoftware.includes(activity.name) && !watchlist.includes(activity.name) ? t(`about.activity.type.${activity.type}`) + ' ' : ''}
+                        {workSoftware.includes(activity.name) && t(`about.activity.Work.working`) + ' '}
+                        {watchlist.includes(activity.name) && t(`about.activity.type.WATCHING`) + ' '}
+                        {activity.name === 'Visual Studio Code' && VSCodeTitleAccompaniment + ' '}
+                        {activity.name === 'Blender' && BlenderTitleAccompaniment + ' '}
+                        {activity.name === 'Spotify' || workSoftware.includes(activity.name) ? t(`on`) + ' ' : ''}
+                        {activity.name}
                     </h2>
                     <div style={{
                         display: 'flex',
                         flexDirection: 'row'
                     }}>
-                        <img
-                            src={
-                                activity.assets ?
-                                    activity.name === 'League of Legends' ?
-                                        activity.state === 'En Selección de campeones' || activity.state === 'En Sala' || activity.state === 'En cola' ?
-                                            activity.assets.largeImageURL
+                        {((activity.assets && activity.assets.largeImageURL) || fetchedImage) &&
+                            <>
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    width: '20%',
+                                    minWidth: '128px',
+                                    objectFit: 'contain',
+                                }}>
+                                    <img
+                                        src={
+                                            activity.assets ?
+                                                activity.name === 'League of Legends' ?
+                                                    activity.state === 'En Selección de campeones' || activity.state === 'En Sala' || activity.state === 'En cola' ?
+                                                        activity.assets.largeImageURL
+                                                        :
+                                                        `http://ddragon.leagueoflegends.com/cdn/img/champion/loading/${activity.assets.largeText === 'Kai\'Sa' ? 'Kaisa' : activity.assets.largeText.replace(' ', '').replace('\'', '')}_0.jpg`
+                                                    :
+                                                    (activity.name === 'GitHub' && (activity.state || activity.details.includes('profile'))) ?
+                                                        fetchedImage
+                                                        :
+                                                        activity.assets.largeImageURL || fetchedImage
+                                                :
+                                                fetchedImage
+                                        }
+                                        alt={activity.name === 'Spotify' ?
+                                            `${t('about.activity.Spotify.coverOf')} ${activity.assets.largeText}`
                                             :
-                                            `http://ddragon.leagueoflegends.com/cdn/img/champion/loading/${activity.assets.largeText === 'Kai\'Sa' ? 'Kaisa' : activity.assets.largeText.replace(' ', '').replace('\'', '')}_0.jpg`
-                                        :
-                                        activity.assets.largeImageURL || gameImage
-                                    :
-                                    gameImage
-                            }
-                            alt={activity.name === 'Spotify' ?
-                                `${t('about.activity.Spotify.coverOf')} ${activity.assets.largeText}`
-                                :
-                                `${t('about.activity.Game.coverOf')} ${activity.name}`
-                            }
-                            style={{
-                                width: '20%',
-                                objectFit: 'contain',
-                                borderRadius: activity.name === 'Spotify' || activity.state === 'En partida' || !activity.assets ? '0%' : '10%',
-                                minWidth: '128px',
-                                alignSelf: 'flex-start'
-                            }} />
-                        <div style={{ width: '2%' }} />
+                                            `${t('about.activity.Game.coverOf')} ${activity.name}`
+                                        }
+                                        style={{
+                                            width: '100%',
+                                            objectFit: 'contain',
+                                            borderRadius: activity.name === 'Spotify' || activity.state === 'En partida' || !activity.assets ? '0%' : '10%',
+                                            alignSelf: 'flex-start'
+                                        }} />
+                                    {activity.assets.smallImageURL &&
+                                        <div style={{
+                                            display: 'flex',
+                                            backgroundColor: '#2c2c2c',
+                                            // backgroundColor: '#f0f',
+                                            width: '4vw',
+                                            minWidth: '32px',
+                                            borderRadius: '50%',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            marginTop: '-3.4vw',
+                                            marginRight: '-0.8vw',
+                                            marginLeft: 'auto'
+                                        }}>
+                                            <img src={activity.assets.smallImageURL}
+                                                alt={`${t('about.activity.Spotify.coverOf')} ${activity.assets.smallImageURL}`}
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'contain',
+                                                    borderRadius: '10%'
+                                                }} />
+                                        </div>
+                                    }
+                                </div>
+                                <div style={{ width: '12px' }} />
+                            </>
+                        }
                         <div>
                             <h3 style={{
                                 marginBlock: '0px'
@@ -160,9 +220,11 @@ export default function Activity({ activity }) {
                                 {/* {activity.name !== 'Spotify' &&
                                      activity.details ? activity.details.replace('Editing', t(`about.activity.VisualStudioCode.editing`)) : ''
                                 } */}
-                                {activity.details ? activity.details.replace('Editing', t(`about.activity.VisualStudioCode.editing`)) : ''}
+                                {activity.name === 'Blender' && t(`about.activity.Blender.project`) + ': '}
+                                {activity.details ? activity.details.replace('Editing', t(`about.activity.VisualStudioCode.editing`)).replace('.blend', '') : ''}
                             </h3>
                             <h4>
+                                {activity.name === 'Blender' && activity.state.includes('KB') && t(`about.activity.Blender.fileSize`) + ': '}
                                 {
                                     activity.state ?
                                         activity.name === 'Spotify' ?
@@ -179,13 +241,40 @@ export default function Activity({ activity }) {
                                         ''
                                 }
                             </h4>
+                            {activity.name === 'Blender' &&
+                                <h5>
+                                    {console.log(activity.assets.smallText)}
+                                    {
+                                        t(
+                                            `about.activity.Blender.modeOrderer.${activity.assets.smallText.replace(/ /g, '')}`,
+                                            {
+                                                type: t(`about.activity.Blender.modes.${activity.assets.smallText.split(' ')[0]}`),
+                                                mode: t(`about.activity.Blender.modes.${activity.assets.smallText.split(' ')[1]}`)
+                                            }
+                                        )
+                                    }
+                                </h5>
+                            }
                             <h5>
                                 {
                                     activity.assets ?
                                         activity.name === 'Visual Studio Code' ?
                                             activity.assets.largeText === 'Idling' ? '' : t(`about.activity.VisualStudioCode.edtitingFile`, { fileType: activity.assets.largeText.split(' ')[2] })
                                             :
-                                            activity.assets.largeText || ''
+                                            activity.name === 'Blender' ?
+                                                t(`about.activity.Blender.engine`, { engine: activity.assets.largeText.split(' ')[0] })
+                                                + ' ' +
+                                                t(`in`)
+                                                + ' ' +
+                                                t(`about.activity.Blender.version`, { version: activity.assets.largeText.split(' ')[activity.assets.largeText.split(' ').length - 1] })
+                                                :
+                                                activity.assets.largeText.toLowerCase().includes('premid') ?
+                                                    watchStatuses.includes(activity.assets.smallText) ?
+                                                        t(`about.activity.Watch.${activity.assets.smallText}`)
+                                                        :
+                                                        ''
+                                                    :
+                                                    activity.assets.largeText || ''
                                         :
                                         ''
                                 }
@@ -211,75 +300,6 @@ export default function Activity({ activity }) {
                         </div>
                     </div>
                 </div>
-            }
-            {
-                (activity.assets ? (activity.assets.largeText ? activity.assets.largeText.toLowerCase().includes('premid') : false) : false) && !premidBlacklist.includes(activity.name) &&
-                <div>
-                    <h2>
-                        {watchlist.includes(activity.name) && t(`about.activity.type.WATCHING`)} {activity.name}
-                    </h2>
-                    <div style={{
-                        display: 'flex',
-                        flexDirection: 'row'
-                    }}>
-                        <div style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            width: '20%',
-                            objectFit: 'contain',
-                        }}>
-                            <img src={activity.assets.largeImageURL} alt={`${t('about.activity.Spotify.coverOf')} ${activity.assets.largeText}`}
-                                style={{
-                                    width: '100%',
-                                    objectFit: 'contain',
-                                    borderRadius: '10%'
-                                }} />
-                            {activity.assets.smallText &&
-                                <div style={{
-                                    display: 'flex',
-                                    backgroundColor: '#2c2c2c',
-                                    // backgroundColor: '#f0f',
-                                    width: '4vw',
-                                    height: '4vw',
-                                    borderRadius: '50%',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    marginTop: '-3.4vw',
-                                    marginRight: '-0.8vw',
-                                    marginLeft: 'auto'
-
-                                }}>
-                                    {watchlist.includes(activity.name) &&
-                                        // <div style={{
-                                        //     backgroundColor: '#f00',
-                                        //     width: '60%',
-                                        //     height: '60%',
-                                        //     borderRadius: '50%'
-                                        // }} />
-                                        <img src={activity.assets.smallImageURL} alt={`${t('about.activity.Spotify.coverOf')} ${activity.assets.smallImageURL}`}
-                                            style={{
-                                                width: '125%',
-                                                height: '125%',
-                                                objectFit: 'contain',
-                                                borderRadius: '10%'
-                                            }} />
-                                    }
-                                </div>
-                            }
-                        </div>
-
-                        <div style={{ width: '2%' }} />
-                        <div>
-                            <h3 style={{
-                                marginBlock: '0px'
-                            }}>
-                                {activity.details}
-                            </h3>
-                            <h4>{activity.state}</h4>
-                            <h5>{activity.assets.smallText}</h5>
-                        </div>
-                    </div>
-                </div >
             }
         </div >
     )
