@@ -180,7 +180,7 @@ export default function Activity({ activity }) {
                                             borderRadius: activity.name === 'Spotify' || activity.state === 'En partida' || !activity.assets ? '0%' : '10%',
                                             alignSelf: 'flex-start'
                                         }} />
-                                    {activity.assets.smallImageURL &&
+                                    {activity.assets && activity.assets.smallImageURL &&
                                         <div style={{
                                             display: 'flex',
                                             backgroundColor: '#2c2c2c',
