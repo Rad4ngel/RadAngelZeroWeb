@@ -73,6 +73,22 @@
                 "editing": "Editing",
                 "workspace": "Workspace (repository):",
                 "edtitingFile": "Editing a {{fileType}} file"
+            },
+            "LeagueOfLegends": {
+                "Map": {
+                    "SummonersRift": "Summoners Rift",
+                    "HowlingAbyss": "Howling Abyss"
+                },
+                "Mode": {
+                    "Normal": "Normal",
+                    "ARAM": "ARAM"
+                },
+                "Moment": {
+                    "Lobby": "Lobby",
+                    "InQueue": "In Queue",
+                    "ChampSelect": "Champion Select",
+                    "InGame": "In Game"
+                }
             }
         }
     },

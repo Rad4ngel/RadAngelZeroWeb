@@ -16,13 +16,14 @@ export default function Activity({ activity }) {
     const [fetchedImage, setFetchedImage] = useState('');
     const [VSCodeTitleAccompaniment, setVSCodeTitleAccompaniment] = useState('');
     const [BlenderTitleAccompaniment, setBlenderTitleAccompaniment] = useState('');
-    const [isPlayingElapsedTime, setIsPlayingElapsedTime] = useState(true);
+    const [duration, setDuration] = useState(0);
+    const [isPlayingElapsedTime, setIsPlayingElapsedTime] = useState(false);
 
     const { elapsedTime, reset } = useElapsedTime({
         isPlaying: isPlayingElapsedTime,
         updateInterval: 1,
     });
-    console.log(activity);
+    // console.log(activity);
 
     useEffect(() => {
         // setIsPlayingElapsedTime(false);
@@ -31,15 +32,20 @@ export default function Activity({ activity }) {
         if (activity.timestamps) {
             if (Object.keys(activity.timestamps).length > 0) {
                 let now = new Date()
+                let start = new Date(now)
+                reset(0)
                 if (activity.timestamps.start) {
-                    let start = new Date(activity.timestamps.start * 1000)
+                    start = new Date(activity.timestamps.start * 1000)
                     let startSec = (Math.floor((now - start) / 1000)).toFixed(0)
                     reset(Number(startSec));
-                    setIsPlayingElapsedTime(true)
-                    console.log(startSec)
                 }
-                // let started = new Date(time)
+                if (activity.timestamps.end) {
+                    let end = new Date(activity.timestamps.end * 1000)
+                    let durationSecs = (Math.floor((end - start) / 1000) - 1).toFixed(0)
+                    setDuration(Number(durationSecs))
+                }
             }
+            setIsPlayingElapsedTime(true)
         } else {
             setIsPlayingElapsedTime(false)
         }
@@ -144,7 +150,7 @@ export default function Activity({ activity }) {
                         display: 'flex',
                         flexDirection: 'row'
                     }}>
-                        {((activity.assets && activity.assets.largeImageURL) || fetchedImage) &&
+                        {((activity.assets && activity.assets.largeImageURL) || fetchedImage || activity.name === 'League of Legends') &&
                             <>
                                 <div style={{
                                     display: 'flex',
@@ -221,12 +227,30 @@ export default function Activity({ activity }) {
                                      activity.details ? activity.details.replace('Editing', t(`about.activity.VisualStudioCode.editing`)) : ''
                                 } */}
                                 {activity.name === 'Blender' && t(`about.activity.Blender.project`) + ': '}
-                                {activity.details ? activity.details.replace('Editing', t(`about.activity.VisualStudioCode.editing`)).replace('.blend', '') : ''}
+                                {(activity.details && activity.name !== 'League of Legends') ? activity.details.replace('Editing', t(`about.activity.VisualStudioCode.editing`)).replace('.blend', '') : ''}
+                                {activity.name === 'League of Legends' ?
+                                    activity.details ?
+                                        activity.details.split(' (')[0] === 'Grieta del Invocador' ?
+                                            t(`about.activity.LeagueOfLegends.Map.SummonersRift`)
+                                            :
+                                            t(`about.activity.LeagueOfLegends.Map.HowlingAbyss`)
+                                        :
+                                        ''
+                                    :
+                                    ''
+                                }
+                                {activity.name === 'League of Legends' ?
+                                    activity.details ?
+                                        ' (' + t(`about.activity.LeagueOfLegends.Mode.${/\(([^)]+)\)/.exec(activity.details)[1]}`) + ')'
+                                        :
+                                        ''
+                                    :
+                                    ''
+                                }
                             </h3>
                             <h4>
                                 {activity.name === 'Blender' && activity.state.includes('KB') && t(`about.activity.Blender.fileSize`) + ': '}
-                                {
-                                    activity.state ?
+                                {activity.state ?
                                         activity.name === 'Spotify' ?
                                             activity.state.replace(/;/g, ',')
                                             :
@@ -268,7 +292,7 @@ export default function Activity({ activity }) {
                                                 + ' ' +
                                                 t(`about.activity.Blender.version`, { version: activity.assets.largeText.split(' ')[activity.assets.largeText.split(' ').length - 1] })
                                                 :
-                                                activity.assets.largeText.toLowerCase().includes('premid') ?
+                                                activity.assets.largeText && activity.assets.largeText.toLowerCase().includes('premid') ?
                                                     watchStatuses.includes(activity.assets.smallText) ?
                                                         t(`about.activity.Watch.${activity.assets.smallText}`)
                                                         :
@@ -279,24 +303,74 @@ export default function Activity({ activity }) {
                                         ''
                                 }
                             </h5>
-                            <div>
 
-                                {activity.timestamps &&
-                                    <h6>
-                                        {Math.floor(elapsedTime.toFixed(0) / 86400) !== 0 &&
-                                            Math.floor(elapsedTime.toFixed(0) / 86400) + ':'}
-                                        {Math.floor(elapsedTime.toFixed(0) / 3600) !== 0 &&
-                                            ((Math.floor(elapsedTime.toFixed(0) / 3600) - (Math.floor(elapsedTime.toFixed(0) / 86400) * 24)).toString().length < 2 && '0')
-                                            +
-                                            (Math.floor(elapsedTime.toFixed(0) / 3600) - (Math.floor(elapsedTime.toFixed(0) / 86400) * 24)) + ':'}
+                            {activity.timestamps &&
+                                <div>
+                                    {activity.timestamps.start &&
+                                        <h6>
+                                            {'Tiempo transcurrido: '}
+                                            {Math.floor(elapsedTime / 86400) !== 0 &&
+                                                Math.floor(elapsedTime / 86400) + ':'}
 
-                                        {(Math.floor(elapsedTime.toFixed(0) / 60) - (Math.floor(elapsedTime.toFixed(0) / 3600) * 60)).toString().length < 2 && '0'}
-                                        {(Math.floor(elapsedTime.toFixed(0) / 60) - (Math.floor(elapsedTime.toFixed(0) / 3600) * 60)) + ':'}
+                                            {Math.floor(elapsedTime / 3600) !== 0 &&
+                                                ((Math.floor(elapsedTime / 3600) - (Math.floor(elapsedTime / 86400) * 24)).toString().length < 2 && '0')
+                                                +
+                                                (Math.floor(elapsedTime / 3600) - (Math.floor(elapsedTime / 86400) * 24)) + ':'}
 
-                                        {Number(elapsedTime.toFixed(0) % 60).toString().length < 2 && '0'}{elapsedTime.toFixed(0) % 60}
-                                    </h6>
-                                }
-                            </div>
+                                            {(Math.floor(elapsedTime / 60) - (Math.floor(elapsedTime / 3600) * 60)).toString().length < 2 && '0'}
+                                            {(Math.floor(elapsedTime / 60) - (Math.floor(elapsedTime / 3600) * 60)) + ':'}
+
+                                            {Number(elapsedTime % 60).toString().length < 2 && '0'}{elapsedTime % 60}
+                                        </h6>
+                                    }
+                                    {activity.timestamps.end &&
+                                        <h6>
+                                            {'Tiempo restante: '}
+
+                                            {(duration - elapsedTime) <= 0 &&
+                                                '00:00'
+                                            }
+                                            {(duration - elapsedTime) > 0 &&
+                                                ((Math.floor((duration - elapsedTime) / 86400)) !== 0 ?
+                                                    (Math.floor((duration - elapsedTime) / 86400)) + ':'
+                                                    :
+                                                    '')
+                                                +
+                                                (Math.floor((duration - elapsedTime) / 3600) !== 0 ?
+                                                    ((Math.floor((duration - elapsedTime) / 3600) - (Math.floor((duration - elapsedTime) / 86400) * 24).toString().length < 2) ? '0' : '')
+                                                    +
+                                                    (Math.floor((duration - elapsedTime) / 3600) - (Math.floor((duration - elapsedTime) / 86400) * 24) - (Math.floor(elapsedTime / 3600))) + ':'
+                                                    :
+                                                    '')
+
+                                                +
+                                                ((Math.floor((duration - elapsedTime) / 60) - (Math.floor((duration - elapsedTime) / 3600) * 60).toString().length < 2) ? '0' : '')
+                                                +
+                                                (Math.floor((duration - elapsedTime) / 60) - (Math.floor((duration - elapsedTime) / 3600) * 60)) + ':'
+                                                +
+                                                (Number((duration - elapsedTime) % 60).toString().length < 2 ? '0' : '') + ((duration - elapsedTime) % 60 + (((duration - elapsedTime) % 60) < 0 ? 60 : 0))
+                                            }
+                                        </h6>
+                                    }
+                                    {activity.timestamps.end && activity.timestamps.start &&
+                                        <h6>
+                                            {'Duration: '}
+
+                                            {Math.floor(duration / 86400) !== 0 &&
+                                                Math.floor(duration / 86400) + ':'}
+
+                                            {Math.floor(duration / 3600) !== 0 &&
+                                                ((Math.floor(duration / 3600) - (Math.floor(duration / 86400) * 24)).toString().length < 2 && '0')
+                                                +
+                                                (Math.floor(duration / 3600) - (Math.floor(duration / 86400) * 24)) + ':'}
+
+                                            {(Math.floor(duration / 60) - (Math.floor(duration / 3600) * 60)).toString().length < 2 && '0'}
+                                            {(Math.floor(duration / 60) - (Math.floor(duration / 3600) * 60)) + ':'}
+                                            {Number(duration % 60).toString().length < 2 && '0'}{duration % 60}
+                                        </h6>
+                                    }
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>

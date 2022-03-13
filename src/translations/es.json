@@ -73,6 +73,22 @@
                 "editing": "Editando",
                 "workspace": "Espacio de trabajo (repositorio):",
                 "edtitingFile": "Editando un archivo {{fileType}}"
+            },
+            "LeagueOfLegends": {
+                "Map": {
+                    "SummonersRift": "Grieta del Invocador",
+                    "HowlingAbyss": "Abismo de los Lamentos"
+                },
+                "Mode": {
+                    "Normal": "Normal",
+                    "ARAM": "ARAM"
+                },
+                "Moment": {
+                    "Lobby": "En sala",
+                    "InQueue": "En cola",
+                    "ChampSelect": "En Selección de campeones",
+                    "InGame": "En partida"
+                }
             }
         }
     },

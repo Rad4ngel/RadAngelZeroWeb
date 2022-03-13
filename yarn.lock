@@ -10371,6 +10371,13 @@
   "resolved" "https://registry.npmjs.org/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz"
   "version" "3.0.4"
 
+"react-random-reveal@^2.0.0":
+  "integrity" "sha512-z+yxBOI6oFLubwhor0g809+vyIQ5rRrzrHEJgG567GCF7S85WEuOq37EbrSb9+BQ5vT4bnhcnxgoGQYEVF1VZQ=="
+  "resolved" "https://registry.npmjs.org/react-random-reveal/-/react-random-reveal-2.0.0.tgz"
+  "version" "2.0.0"
+  dependencies:
+    "use-elapsed-time" "3.0.2"
+
 "react-redux@^7.2.0", "react-redux@^7.2.6":
   "integrity" "sha512-10RPdsz0UUrRL1NZE0ejTkucnclYSgXp5q+tB5SWx2qeG2ZJQJyymgAhwKy73yiL/13btfB6fPr+rgbMAaZIAQ=="
   "resolved" "https://registry.npmjs.org/react-redux/-/react-redux-7.2.6.tgz"
@@ -12361,6 +12368,11 @@
   "integrity" "sha512-q9b9j0K1SfsX2B9vzfRYkNyn2kBV5YBh9oJ/+XnIPKFjLbjvnF2PnJ/08HWPfCKKBWGz8d1qAfmXiYxWAseklw=="
   "resolved" "https://registry.npmjs.org/use-elapsed-time/-/use-elapsed-time-3.0.4.tgz"
   "version" "3.0.4"
+
+"use-elapsed-time@3.0.2":
+  "integrity" "sha512-2EY9lJ5DWbAvT8wWiEp6Ztnl46DjXz2j78uhWbXaz/bg3OfpbgVucCAlcN8Bih6hTJfFTdVYX9L6ySMn5py/wQ=="
+  "resolved" "https://registry.npmjs.org/use-elapsed-time/-/use-elapsed-time-3.0.2.tgz"
+  "version" "3.0.2"
 
 "use-memo-one@^1.1.1":
   "integrity" "sha512-u2qFKtxLsia/r8qG0ZKkbytbztzRb317XCkT7yP8wxL0tZ/CzK2G+WWie5vWvpyeP7+YoPIwbJoIHJ4Ba4k0oQ=="
