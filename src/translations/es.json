@@ -32,7 +32,12 @@
             "Watch": {
                 "Playing": "Reproduciendo",
                 "Paused": "Pausado",
-                "Live": "En Vivo"
+                "Live": "En Vivo",
+                "Browsing": "Navegando",
+                "BrowsingMain": "Viendo la pagina principal"
+            },
+            "Twitch": {
+
             },
             "Spotify": {
                 "coverOf": "Portada del album"
@@ -77,11 +82,14 @@
             "LeagueOfLegends": {
                 "Map": {
                     "SummonersRift": "Grieta del Invocador",
-                    "HowlingAbyss": "Abismo de los Lamentos"
+                    "HowlingAbyss": "Abismo de los Lamentos",
+                    "TFT": "Teamfight Tactics"
                 },
                 "Mode": {
                     "Normal": "Normal",
-                    "ARAM": "ARAM"
+                    "ARAM": "ARAM",
+                    "Ranked": "Clasificación",
+                    "CoopVSAI": "Cooperativo vs. IA"
                 },
                 "Moment": {
                     "Lobby": "En sala",

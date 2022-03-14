@@ -7,8 +7,8 @@ const specialImageSearch = ['GitHub']
 const premidBlacklist = [];
 const watchlist = ['Twitch', 'YouTube'];
 const watchStatuses = ['Playing', 'Paused', 'Live']
-const workSoftware = ['Blender', 'Visual Studio Code'];
-const modelingSoftware = ['Blender'];
+const workSoftware = ['Visual Studio Code', 'Blender', 'VRoid Studio'];
+const modelingSoftware = ['Blender', 'VRoid Studio'];
 
 export default function Activity({ activity }) {
     const [randVSC] = useState(Math.round(Math.random() * 1));
@@ -23,12 +23,9 @@ export default function Activity({ activity }) {
         isPlaying: isPlayingElapsedTime,
         updateInterval: 1,
     });
-    // console.log(activity);
 
     useEffect(() => {
-        // setIsPlayingElapsedTime(false);
-        console.log('use effect');
-        console.log(activity);
+        console.log(activity)
         if (activity.timestamps) {
             if (Object.keys(activity.timestamps).length > 0) {
                 let now = new Date()
@@ -142,7 +139,7 @@ export default function Activity({ activity }) {
                         {workSoftware.includes(activity.name) && t(`about.activity.Work.working`) + ' '}
                         {watchlist.includes(activity.name) && t(`about.activity.type.WATCHING`) + ' '}
                         {activity.name === 'Visual Studio Code' && VSCodeTitleAccompaniment + ' '}
-                        {activity.name === 'Blender' && BlenderTitleAccompaniment + ' '}
+                        {modelingSoftware.includes(activity.name) && BlenderTitleAccompaniment + ' '}
                         {activity.name === 'Spotify' || workSoftware.includes(activity.name) ? t(`on`) + ' ' : ''}
                         {activity.name}
                     </h2>
@@ -227,23 +224,44 @@ export default function Activity({ activity }) {
                                      activity.details ? activity.details.replace('Editing', t(`about.activity.VisualStudioCode.editing`)) : ''
                                 } */}
                                 {activity.name === 'Blender' && t(`about.activity.Blender.project`) + ': '}
-                                {(activity.details && activity.name !== 'League of Legends') ? activity.details.replace('Editing', t(`about.activity.VisualStudioCode.editing`)).replace('.blend', '') : ''}
+                                {(activity.details && activity.name !== 'League of Legends') ?
+                                    activity.details.includes('Viewing home page') ?
+                                        t(`about.activity.Watch.BrowsingMain`)
+                                        :
+                                        activity.details.includes('Browsing') ?
+                                            t(`about.activity.Watch.Browsing`)
+                                            :
+                                            activity.details.replace('Editing', t(`about.activity.VisualStudioCode.editing`)).replace('.blend', '')
+                                    :
+                                    ''}
                                 {activity.name === 'League of Legends' ?
                                     activity.details ?
-                                        activity.details.split(' (')[0] === 'Grieta del Invocador' ?
+                                        activity.details.includes('Grieta del Invocador') ?
                                             t(`about.activity.LeagueOfLegends.Map.SummonersRift`)
                                             :
-                                            t(`about.activity.LeagueOfLegends.Map.HowlingAbyss`)
+                                            activity.details.includes('Abismo de los Lamentos') ?
+                                                t(`about.activity.LeagueOfLegends.Map.HowlingAbyss`)
+                                                :
+                                                t(`about.activity.LeagueOfLegends.Map.TFT`)
                                         :
                                         ''
                                     :
                                     ''
                                 }
                                 {activity.name === 'League of Legends' ?
-                                    activity.details ?
-                                        ' (' + t(`about.activity.LeagueOfLegends.Mode.${/\(([^)]+)\)/.exec(activity.details)[1]}`) + ')'
+                                    ' (' +
+                                    (activity.details ?
+                                        activity.details.includes('Clasificación') ?
+                                            t(`about.activity.LeagueOfLegends.Mode.Ranked`)
+                                            :
+                                            activity.details.includes('Cooperativo vs. IA') ?
+                                                t(`about.activity.LeagueOfLegends.Mode.CoopVSAI`)
+                                                :
+
+                                                t(`about.activity.LeagueOfLegends.Mode.${/\(([^)]+)\)/.exec(activity.details)[1]}`)
                                         :
-                                        ''
+                                        '')
+                                    + ')'
                                     :
                                     ''
                                 }
@@ -251,18 +269,21 @@ export default function Activity({ activity }) {
                             <h4>
                                 {activity.name === 'Blender' && activity.state.includes('KB') && t(`about.activity.Blender.fileSize`) + ': '}
                                 {activity.state ?
-                                        activity.name === 'Spotify' ?
-                                            activity.state.replace(/;/g, ',')
+                                    activity.name === 'Spotify' ?
+                                        activity.state.replace(/;/g, ',')
+                                        :
+                                        activity.name === 'Visual Studio Code' ?
+                                            activity.details === 'Idling' ?
+                                                'Pensando'
+                                                :
+                                                activity.state.replace('Workspace:', t(`about.activity.VisualStudioCode.workspace`))
                                             :
-                                            activity.name === 'Visual Studio Code' ?
-                                                activity.details === 'Idling' ?
-                                                    'Pensando'
-                                                    :
-                                                    activity.state.replace('Workspace:', t(`about.activity.VisualStudioCode.workspace`))
+                                            activity.name === 'Twitch' ?
+                                                activity.state.replace(' (undefined)', '')
                                                 :
                                                 activity.state
-                                        :
-                                        ''
+                                    :
+                                    ''
                                 }
                             </h4>
                             {activity.name === 'Blender' &&
@@ -305,7 +326,7 @@ export default function Activity({ activity }) {
                             </h5>
 
                             {activity.timestamps &&
-                                <div>
+                                <div style={{ display: 'flex', flexDirection: 'row', gap: '12px' }}>
                                     {activity.timestamps.start &&
                                         <h6>
                                             {'Tiempo transcurrido: '}

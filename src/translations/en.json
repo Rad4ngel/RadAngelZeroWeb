@@ -32,7 +32,12 @@
             "Watch": {
                 "Playing": "Playing",
                 "Paused": "Paused",
-                "Live": "Live"
+                "Live": "Live",
+                "Browsing": "Browsing",
+                "BrowsingMain": "Viewing home page"
+            },
+            "Twitch": {
+
             },
             "Spotify": {
                 "coverOf": "Cover of album"
@@ -77,11 +82,14 @@
             "LeagueOfLegends": {
                 "Map": {
                     "SummonersRift": "Summoners Rift",
-                    "HowlingAbyss": "Howling Abyss"
+                    "HowlingAbyss": "Howling Abyss",
+                    "TFT": "Teamfight Tactics"
                 },
                 "Mode": {
                     "Normal": "Normal",
-                    "ARAM": "ARAM"
+                    "ARAM": "ARAM",
+                    "Ranked": "Ranked",
+                    "CoopVSAI": "Coop vs. AI"
                 },
                 "Moment": {
                     "Lobby": "Lobby",

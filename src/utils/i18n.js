@@ -11,7 +11,7 @@ i18n
         debug: process.env.NODE_ENV === "development",
         fallbackLng: 'en',
         interpolation: {
-            escapeValue: false,
+            escapeValue: true,
         },
         resources: {
             en: {
