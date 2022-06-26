@@ -1,6 +1,9 @@
 header {
-  width: 100%;
   display: flex;
+  width: 100%;
+  align-items: center;
+  margin: 0px auto;
+  border-bottom: 2px solid #fff;
 }
 
 .App {

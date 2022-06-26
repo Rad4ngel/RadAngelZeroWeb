@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { t } from 'i18next';
+import { useTranslation } from "react-i18next";
 import { useElapsedTime } from 'use-elapsed-time';
 import styles from './Activity.module.css'
 const blacklist = ['Google Play'];
@@ -11,6 +11,7 @@ const workSoftware = ['Visual Studio Code', 'Blender', 'VRoid Studio'];
 const modelingSoftware = ['Blender', 'VRoid Studio'];
 
 export default function Activity({ activity }) {
+    const { t } = useTranslation();
     const [randVSC] = useState(Math.round(Math.random() * 1));
     const [randBlender] = useState(Math.round(Math.random() * 1));
     const [fetchedImage, setFetchedImage] = useState('');
@@ -84,48 +85,49 @@ export default function Activity({ activity }) {
             searchWikis.onreadystatechange = (wikisResult) => {
                 if (wikisResult.target.readyState === 4 && wikisResult.target.status === 200) {
                     console.log(JSON.parse(searchWikis.response))
-                    let title = JSON.parse(searchWikis.response).query.search[activity.name === 'Blender' ? 1 : 0].title
-                    const getWiki = new XMLHttpRequest();
-                    getWiki.open("GET", `https://en.wikipedia.org/w/rest.php/v1/page/${title}`);
-                    getWiki.send();
-                    getWiki.onreadystatechange = (wiki) => {
-                        if (wiki.target.readyState === 4 && wiki.target.status === 200) {
-                            let wikiContent = JSON.parse(getWiki.response).source.split('\n');
-                            wikiContent.every((element) => {
-                                if (element.includes('logo') || element.includes('File:') || element.includes('image')) {
-                                    let imgProcessor = element
-                                    if (imgProcessor.includes(' = ')) {
-                                        imgProcessor = imgProcessor.split(' = ')[1]
-                                    }
-                                    if (imgProcessor.includes('|')) {
-                                        imgProcessor = imgProcessor.split('|')[0]
-                                    }
-                                    const getWikiImage = new XMLHttpRequest();
-                                    getWikiImage.open("GET", `https://en.wikipedia.org/w/api.php?action=query&titles=Image:${imgProcessor.replace(/\[/g, '').replace('File:', '')}&prop=imageinfo&iiprop=url&format=json&origin=*`);
-                                    getWikiImage.send();
-                                    getWikiImage.onreadystatechange = (wikiImage) => {
-                                        if (wikiImage.target.readyState === 4 && wikiImage.target.status === 200) {
-                                            let wikiPage = JSON.parse(getWikiImage.response).query.pages;
-                                            setFetchedImage(wikiPage[Object.keys(wikiPage)[0]].imageinfo[0].url)
+                    if (JSON.parse(searchWikis.response).query.search.length > 0) {
+                        let title = JSON.parse(searchWikis.response).query.search[activity.name === 'Blender' ? 1 : 0].title
+                        const getWiki = new XMLHttpRequest();
+                        getWiki.open("GET", `https://en.wikipedia.org/w/rest.php/v1/page/${title}`);
+                        getWiki.send();
+                        getWiki.onreadystatechange = (wiki) => {
+                            if (wiki.target.readyState === 4 && wiki.target.status === 200) {
+                                let wikiContent = JSON.parse(getWiki.response).source.split('\n');
+                                wikiContent.every((element) => {
+                                    if (element.includes('logo') || element.includes('File:') || element.includes('image')) {
+                                        let imgProcessor = element
+                                        if (imgProcessor.includes(' = ')) {
+                                            imgProcessor = imgProcessor.split(' = ')[1]
                                         }
+                                        if (imgProcessor.includes('|')) {
+                                            imgProcessor = imgProcessor.split('|')[0]
+                                        }
+                                        const getWikiImage = new XMLHttpRequest();
+                                        getWikiImage.open("GET", `https://en.wikipedia.org/w/api.php?action=query&titles=Image:${imgProcessor.replace(/\[/g, '').replace('File:', '')}&prop=imageinfo&iiprop=url&format=json&origin=*`);
+                                        getWikiImage.send();
+                                        getWikiImage.onreadystatechange = (wikiImage) => {
+                                            if (wikiImage.target.readyState === 4 && wikiImage.target.status === 200) {
+                                                let wikiPage = JSON.parse(getWikiImage.response).query.pages;
+                                                setFetchedImage(wikiPage[Object.keys(wikiPage)[0]].imageinfo[0].url)
+                                            }
+                                        }
+                                        return false;
                                     }
-                                    return false;
-                                }
-                                return true;
-                            });
+                                    return true;
+                                });
+                            }
                         }
                     }
                 }
             }
         }
-    }, [activity, randBlender, randVSC, reset])
+    }, [activity, randBlender, randVSC, reset, t])
 
     return (
         <div style={{
             display: 'flex',
             flexDirection: 'column',
-            alignSelf: 'center',
-            width: '80%',
+            alignSelf: 'flex-start',
             backgroundColor: '#2c2c2c',
             padding: '1.2em',
             borderRadius: '2vh',
@@ -188,13 +190,13 @@ export default function Activity({ activity }) {
                                             display: 'flex',
                                             backgroundColor: '#2c2c2c',
                                             // backgroundColor: '#f0f',
-                                            width: '4vw',
+                                            width: '30%',
                                             minWidth: '32px',
                                             borderRadius: '50%',
                                             justifyContent: 'center',
                                             alignItems: 'center',
-                                            marginTop: '-3.4vw',
-                                            marginRight: '-0.8vw',
+                                            marginTop: '-20%',
+                                            marginRight: '-8%',
                                             marginLeft: 'auto'
                                         }}>
                                             <img src={activity.assets.smallImageURL}

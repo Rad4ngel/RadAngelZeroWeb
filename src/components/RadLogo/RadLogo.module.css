@@ -1,4 +1,6 @@
 h1 {
     font-family: 'Electroharmonix';
     font-size: 26px;
+    min-width: 55px;
+    text-align: center;
 }
